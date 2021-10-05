@@ -8,6 +8,8 @@ odoo.define('fiscal_epos_print.models', function (require) {
     var round_pr = utils.round_precision;
     var OrderSuper = models.Order;
 
+    const { Gui } = require('point_of_sale.Gui');
+
     models.load_fields("account.journal",
         ["fiscalprinter_payment_type", "fiscalprinter_payment_index"]);
 
@@ -126,7 +128,8 @@ odoo.define('fiscal_epos_print.models', function (require) {
                     tax_amount: this.pos.taxes_by_id[i].amount,
                 }
             }
-            this.pos.gui.show_popup('error', {
+            // TODO is this correct?
+            Gui.showPopup('error', {
                 'title': _t('Error'),
                 'body': _t('No taxes found'),
             });

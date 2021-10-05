@@ -8,6 +8,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
     var _t = core._t;
     var round_pr = utils.round_precision;
 
+    const { Gui } = require('point_of_sale.Gui');
+
     function addPadding(str, padding=4) {
         var pad = new Array(padding).fill(0).join('') + str;
         return pad.substr(pad.length - padding, padding);
@@ -145,7 +147,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                         var msgPrinter = decodeFpStatus(info);
                     }
                     sender.chrome.screens['receipt'].lock_screen(true);
-                    sender.pos.gui.show_popup('error', {
+                    // TODO is this correct?
+                    Gui.showPopup('error', {
                         'title': _t('Connection to the printer failed'),
                         'body': _t('An error happened while sending data to the printer. Error code: ') + (res.code || '') + '\n' + _t('Error Message: ') + msgPrinter,
                     });
@@ -158,7 +161,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                     var old = add_info.responseData[13] + add_info.responseData[14] + add_info.responseData[15] + add_info.responseData[16];
                     var rejected = add_info.responseData[17] + add_info.responseData[18] + add_info.responseData[19] + add_info.responseData[20];
                     var msg = _t("Files waiting to be sent: ") + to_be_sent + "; " + _t("Old files: ") + old + "; " + _t("Rejected files: ") + rejected;
-                    sender.pos.gui.show_popup('alert', {
+                    // TODO is this correct?
+                    Gui.showPopup('alert', {
                         'title': _t('IRA files'),
                         'body': msg,
                     });
@@ -194,7 +198,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             this.fiscalPrinter.onerror = function() {
                 sender.chrome.loading_hide();
                 sender.chrome.screens['receipt'].lock_screen(true);
-                sender.pos.gui.show_popup('error', {
+                // TODO is this correct?
+                Gui.showPopup('error', {
                     'title': _t('Network error'),
                     'body': _t('Printer can not be reached')
                 });
