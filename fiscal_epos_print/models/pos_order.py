@@ -44,7 +44,6 @@ class PosOrder(models.Model):
 
     # This is on pos_order_mgmt to send back the fields of already existing
     # pos.order
-    @api.multi
     def _prepare_done_order_for_pos(self):
         res = super(PosOrder, self)._prepare_done_order_for_pos()
         res['lottery_code'] = self.lottery_code
