@@ -148,7 +148,7 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                     }
                     sender.chrome.screens['receipt'].lock_screen(true);
                     // TODO is this correct?
-                    Gui.showPopup('error', {
+                    Gui.showPopup('ErrorPopup', {
                         'title': _t('Connection to the printer failed'),
                         'body': _t('An error happened while sending data to the printer. Error code: ') + (res.code || '') + '\n' + _t('Error Message: ') + msgPrinter,
                     });
@@ -199,7 +199,7 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                 sender.chrome.loading_hide();
                 sender.chrome.screens['receipt'].lock_screen(true);
                 // TODO is this correct?
-                Gui.showPopup('error', {
+                Gui.showPopup('ErrorPopup', {
                     'title': _t('Network error'),
                     'body': _t('Printer can not be reached')
                 });
