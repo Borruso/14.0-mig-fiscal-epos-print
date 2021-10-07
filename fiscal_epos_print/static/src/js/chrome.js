@@ -4,7 +4,7 @@ odoo.define("fiscal_epos_print.chrome", function (require) {
     var core = require("web.core");
     // TODO Remove this, it's not exists anymore
     // var PosBaseWidget = require('point_of_sale.BaseWidget');
-    var chrome = require('point_of_sale.chrome');
+    var chrome = require('point_of_sale.Chrome');
     var epson_epos_print = require('fiscal_epos_print.epson_epos_print');
     var _t = core._t;
     var eposDriver = epson_epos_print.eposDriver;
