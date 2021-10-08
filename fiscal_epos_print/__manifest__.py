@@ -30,8 +30,12 @@
         'views/assets.xml',
     ],
     'qweb': [
-        'static/src/xml/pos.xml',
-        'static/src/xml/lottery.xml',
+        'static/src/xml/Chrome.xml',
+        'static/src/xml/ChromeWidgets/EpsonEPOSButton.xml',
+        'static/src/xml/ChromeWidgets/EpsonFP81IIComponent.xml',
+        # TODO To be converted with new components system
+        # 'static/src/xml/pos.xml',
+        # 'static/src/xml/lottery.xml',
     ],
     'installable': True,
     'auto_install': False,
