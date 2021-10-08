@@ -1,11 +1,13 @@
+<!-- TODO THIS XML MUST BE DISTRIBUTED IN THE PROPER COMPONENT FILE -->
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
-    <t t-name="EpsonEPOSWidget">
+    <!-- Moved inside EpostonEPOSButton.xml -->
+    <!-- <t t-name="EpsonEPOSWidget">
         <div class="header-button">
             <img src="/fiscal_epos_print/static/src/img/epos.svg" alt="Epson ePOS" title="Epson ePOS Operation" />
         </div>
-    </t>
+    </t> -->
 
     <t t-extend="PosTicket">
         <t t-jquery="div[class='pos-sale-ticket']" t-operation="after">
@@ -30,12 +32,13 @@
         </t>
     </t>
 
-    <t t-name="SetRefundInfoButton">
+    <!-- Moved inside SetRefundInfoButton.xml -->
+    <!-- <t t-name="SetRefundInfoButton">
         <div id="refund_info_button" class='control-button'>
             <i class='fa fa-pencil-square-o'/>
             Refund Data
         </div>
-    </t>
+    </t> -->
 
     <t t-name="RefundInfoPopupWidget">
         <div class="modal-dialog">
@@ -82,7 +85,8 @@
         </div>
     </t>
 
-    <t t-name="EpsonFP81IIWidget">
+    <!-- Moved inside EpostonFP81IIComponent.xml -->
+    <!-- <t t-name="EpsonFP81IIWidget">
         <div class="epson-fp81ii-widget oe_hidden">
             <h1>Epson ePOS</h1>
             <div class="toggle"><i class='fa fa-times'/></div>
@@ -145,6 +149,6 @@
                 </ul>
             </div>
         </div>
-    </t>
+    </t> -->
 
 </templates>
