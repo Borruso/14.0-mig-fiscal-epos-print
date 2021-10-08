@@ -3,8 +3,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
 
     var core = require("web.core");
     var utils = require('web.utils');
-    var PosDB = require('point_of_sale.DB');
-    var rpc = require('web.rpc');
+    // var PosDB = require('point_of_sale.DB');
+    // var rpc = require('web.rpc');
     var _t = core._t;
     var round_pr = utils.round_precision;
 
