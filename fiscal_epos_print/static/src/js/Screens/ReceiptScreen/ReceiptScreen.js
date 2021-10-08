@@ -33,8 +33,9 @@ odoo.define("fiscal_epos_print.ReceiptScreen", function (require) {
             this.$('.printing-retry').click(function(){
                 if (self._locked) {
                     var currentOrder = self.pos.get_order();
-                    self.chrome.loading_show();
-                    self.chrome.loading_message(_t('Connecting to the fiscal printer'));
+                    // TODO self.chrome does not exists
+                    // self.chrome.loading_show();
+                    // self.chrome.loading_message(_t('Connecting to the fiscal printer'));
                     var printer_options = currentOrder.getPrinterOptions();
                     printer_options.order = currentOrder;
                     var receipt = currentOrder.export_for_printing();
