@@ -127,7 +127,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             this.sender = sender;
             this.order = options.order || null;
             this.fiscalPrinter.onreceive = function(res, tag_list_names, add_info) {
-                sender.chrome.loading_hide();
+                // TODO not exist
+                // sender.chrome.loading_hide();
                 var tagStatus = (tag_list_names ? tag_list_names.filter(getStatusField) : []);
                 var msgPrinter = "";
 
@@ -146,7 +147,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                         var info = add_info[tagStatus[0]];
                         var msgPrinter = decodeFpStatus(info);
                     }
-                    sender.chrome.screens['receipt'].lock_screen(true);
+                    // TODO
+                    // sender.chrome.screens['receipt'].lock_screen(true);
                     // TODO is this correct?
                     Gui.showPopup('ErrorPopup', {
                         'title': _t('Connection to the printer failed'),
@@ -171,7 +173,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
 
                 // is it a receipt data?
                 if (add_info.fiscalReceiptNumber && add_info.fiscalReceiptAmount && add_info.fiscalReceiptDate && add_info.zRepNumber) {
-                    sender.chrome.screens['receipt'].lock_screen(false);
+                    // TODO
+                    // sender.chrome.screens['receipt'].lock_screen(false);
                     var order = self.order;
                     order._printed = true;
                     if (!order.fiscal_receipt_number) {
@@ -190,14 +193,16 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                         self.printOpenCashDrawer();
                     }
                     if (!sender.pos.config.show_receipt_when_printing) {
-                        sender.chrome.screens['receipt'].click_next();
+                        // TODO
+                        // sender.chrome.screens['receipt'].click_next();
                     }
                     return;
                 }
             }
             this.fiscalPrinter.onerror = function() {
-                sender.chrome.loading_hide();
-                sender.chrome.screens['receipt'].lock_screen(true);
+                // TODO not exist
+                // sender.chrome.loading_hide();
+                // sender.chrome.screens['receipt'].lock_screen(true);
                 // TODO is this correct?
                 Gui.showPopup('ErrorPopup', {
                     'title': _t('Network error'),

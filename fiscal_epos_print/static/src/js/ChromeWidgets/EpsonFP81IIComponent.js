@@ -91,8 +91,8 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
         }
 
         getPrinterOptions() {
-            var protocol = ((this.pos.config.use_https) ? 'https://' : 'http://');
-            var printer_url = protocol + this.pos.config.printer_ip + '/cgi-bin/fpmate.cgi';
+            var protocol = ((this.env.pos.config.use_https) ? 'https://' : 'http://');
+            var printer_url = protocol + this.env.pos.config.printer_ip + '/cgi-bin/fpmate.cgi';
             return {url: printer_url};
         }
 
@@ -125,7 +125,8 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             if (confirmed) {
                 fp90.printFiscalReprintLast();
             } else {
-                this.chrome.loading_hide();
+                // TODO not exist
+                // this.chrome.loading_hide();
             }
         }
 
@@ -154,7 +155,8 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             if (confirmed) {
                 fp90.printFiscalReport();
             } else {
-                this.chrome.loading_hide();
+                // TODO not exist
+                // this.chrome.loading_hide();
             }
         }
 
@@ -173,7 +175,8 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             if (confirmed) {
                 fp90.printFiscalXReport();
             } else {
-                this.chrome.loading_hide();
+                // TODO not exist
+                // this.chrome.loading_hide();
             }
         }
     }
