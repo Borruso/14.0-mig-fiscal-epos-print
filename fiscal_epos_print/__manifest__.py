@@ -33,6 +33,8 @@
         'static/src/xml/Chrome.xml',
         'static/src/xml/ChromeWidgets/EpsonEPOSButton.xml',
         'static/src/xml/ChromeWidgets/EpsonFP81IIComponent.xml',
+        'static/src/xml/ChromeWidgets/SetLotteryCodeButton.xml',
+        'static/src/xml/ChromeWidgets/SetRefundInfoButton.xml',
         # TODO To be converted with new components system
         # 'static/src/xml/pos.xml',
         # 'static/src/xml/lottery.xml',
