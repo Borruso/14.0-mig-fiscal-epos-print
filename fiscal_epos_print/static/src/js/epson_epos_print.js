@@ -141,7 +141,9 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                     if (self.order != null) {
                         var order = self.order;
                         order.fiscal_printer_debug_info = JSON.stringify(res) + '\n' + JSON.stringify(tag_list_names) + '\n' + JSON.stringify(add_info);
-                        sender.pos.push_order(order);
+                        // TODO is push_orders or push_single_order
+                        // sender.env.pos.push_orders(order);
+                        // sender.env.pos.push_single_order(order);
                     }
                     if (tagStatus.length > 0) {
                         var info = add_info[tagStatus[0]];
@@ -183,16 +185,18 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                         var fiscalReceiptDate = new Date(add_info.fiscalReceiptDate.replace(/(\d{1,2})\/(\d{1,2})\/(\d{4})/, '$3/$2/$1'));
                         order.fiscal_receipt_date = moment(fiscalReceiptDate).format('YYYY-MM-DD');
                         order.fiscal_z_rep_number = add_info.zRepNumber;
-                        order.fiscal_printer_serial = sender.pos.config.fiscal_printer_serial;
-                        sender.pos.db.add_order(order.export_as_JSON());
+                        order.fiscal_printer_serial = sender.env.pos.config.fiscal_printer_serial;
+                        sender.env.pos.db.add_order(order.export_as_JSON());
                         // try to save the order
-                        sender.pos.push_order();
+                        // TODO is push_orders or push_single_order
+                        // sender.env.pos.push_orders();
+                        // sender.env.pos.push_single_order();
                     }
-                    if(sender.pos.config.fiscal_cashdrawer)
+                    if(sender.env.pos.config.fiscal_cashdrawer)
                     {
                         self.printOpenCashDrawer();
                     }
-                    if (!sender.pos.config.show_receipt_when_printing) {
+                    if (!sender.env.pos.config.show_receipt_when_printing) {
                         // TODO
                         // sender.chrome.screens['receipt'].click_next();
                     }
@@ -385,7 +389,7 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                             xml += self.printRecItemAdjustment({
                                 adjustmentType: 0,
                                 description: _t('Discount') + ' ' + l.discount + '%',
-                                amount: round_pr((l.quantity * l.full_price) - l.price_display, self.sender.pos.currency.rounding),
+                                amount: round_pr((l.quantity * l.full_price) - l.price_display, self.sender.env.pos.currency.rounding),
                             });
                         }
                     }
