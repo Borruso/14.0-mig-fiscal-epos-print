@@ -110,7 +110,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             fp90.printOpenCashDrawer();
         }
 
-        reprintLastReceipt() {
+        async reprintLastReceipt() {
             this.hide();
             // TODO find the same Component method that show loading_*
             // this.chrome.loading_show();
@@ -118,7 +118,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             var printer_options = this.getPrinterOptions();
             var fp90 = new eposDriver(printer_options, this);
             // ConfirmPopup
-            const { confirmed } = this.showPopup('ConfirmPopup', {
+            const { confirmed } = await this.showPopup('ConfirmPopup', {
                 title:_t('Reprint Last Receipt?'),
                 body: _t('Please confirm to reprint the last receipt'),
             });
@@ -140,7 +140,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             fp90.getStatusOfFilesForADE();
         }
 
-        fiscalClosing() {
+        async fiscalClosing() {
             this.hide();
             // TODO find the same Component method that show loading_*
             // this.chrome.loading_show();
@@ -148,7 +148,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             var printer_options = this.getPrinterOptions();
             var fp90 = new eposDriver(printer_options, this);
             // ConfirmPopup
-            const { confirmed } = this.showPopup('ConfirmPopup', {
+            const { confirmed } = await this.showPopup('ConfirmPopup', {
                 title:_t('Confirm Printer Fiscal Closure (Report Z)?'),
                 body: _t('Please confirm to execute the Printer Fiscal Closure'),
             });
@@ -160,7 +160,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             }
         }
 
-        fiscalXreport() {
+        async fiscalXreport() {
             this.hide();
             // TODO find the same Component method that show loading_*
             // this.chrome.loading_show();
@@ -168,7 +168,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             var printer_options = this.getPrinterOptions();
             var fp90 = new eposDriver(printer_options, this);
             // ConfirmPopup
-            const { confirmed } = this.showPopup('ConfirmPopup', {
+            const { confirmed } = await this.showPopup('ConfirmPopup', {
                 title: _t('Confirm Printer Daily Financial Report (Report X)?'),
                 body: _t('Please confirm to execute the Printer Daily Financial Report'),
             });
