@@ -25,13 +25,13 @@ odoo.define("fiscal_epos_print.PaymentScreen", function (require) {
             fp90.printFiscalReceipt(receipt);
         }
 
-        finalize_validation() {
+        _finalizeValidation() {
             // we need to get currentOrder before calling the _super()
             // otherwise we will likely get a empty order when we want to skip
             // the receipt preview
-            var currentOrder = this.pos.get('selectedOrder');
-            this._super.apply(this, arguments);
-            if (this.pos.config.printer_ip && !currentOrder.is_to_invoice()) {
+            var currentOrder = this.env.pos.get('selectedOrder');
+            super._finalizeValidation(...arguments);
+            if (this.env.pos.config.printer_ip && !currentOrder.is_to_invoice()) {
                 // TODO self.chrome does not exists
                 // this.chrome.loading_show();
                 // this.chrome.loading_message(_t('Connecting to the fiscal printer'));
@@ -41,27 +41,28 @@ odoo.define("fiscal_epos_print.PaymentScreen", function (require) {
                 this.sendToFP90Printer(receipt, printer_options);
             }
         }
-        order_is_valid(force_validation) {
-            if (this.pos.config.iface_tax_included == 'subtotal') {
-                this.gui.show_popup('error',{
+
+        _isOrderValid(isForceValidate) {
+            if (this.env.pos.config.iface_tax_included == 'subtotal') {
+                this.showPopup('ErrorPopup', {
                     'title': _t('Wrong tax configuration'),
                     'body':  _t("Product prices on receipts must be set to 'Tax-Included Price' in POS configuration"),
                 });
                 return false;
             }
             var self = this;
-            var receipt = this.pos.get_order();
+            var receipt = this.env.pos.get_order();
             if (receipt.has_refund && (receipt.refund_date == null || receipt.refund_date === '' ||
                                         receipt.refund_doc_num == null || receipt.refund_doc_num == '' ||
                                         receipt.refund_cash_fiscal_serial == null || receipt.refund_cash_fiscal_serial == '' ||
                                         receipt.refund_report == null || receipt.refund_report == '')) {
-                    this.gui.show_popup('error',{
+                                            this.showPopup('ErrorPopup', {
                         'title': _t('Refund Information Not Present'),
                         'body':  _t("The refund information aren't present. Please insert them before printing the receipt"),
                     });
                     return false;
             }
-            return this._super(force_validation);
+            return super._isOrderValid(isForceValidate);
         }
     };
 
