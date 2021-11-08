@@ -118,7 +118,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             var printer_options = this.getPrinterOptions();
             var fp90 = new eposDriver(printer_options, this);
             // ConfirmPopup
-            const { confirmed } = await this.showPopup('ConfirmPopup', {
+            const { confirmed } = await Gui.showPopup('ConfirmPopup', {
                 title:_t('Reprint Last Receipt?'),
                 body: _t('Please confirm to reprint the last receipt'),
             });

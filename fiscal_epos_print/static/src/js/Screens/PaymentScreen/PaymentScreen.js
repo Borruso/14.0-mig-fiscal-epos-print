@@ -10,9 +10,9 @@ odoo.define("fiscal_epos_print.PaymentScreen", function (require) {
 
     const MyPaymentScreen = PaymentScreen => class extends PaymentScreen {
         show() {
-            this._super.apply(this, arguments);
+            _super.apply(this, arguments);
             if (this.pos.config.printer_ip) {
-                var currentOrder = this.pos.get_order();
+                var currentOrder = this.env.pos.get_order();
                 var printer_options = currentOrder.getPrinterOptions();
                 var fp90 = new eposDriver(printer_options, this);
                 var amount = this.format_currency(currentOrder.get_total_with_tax());
