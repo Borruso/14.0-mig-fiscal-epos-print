@@ -195,6 +195,7 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                     if(sender.env.pos.config.fiscal_cashdrawer)
                     {
                         self.printOpenCashDrawer();
+                        self.resetPrinter();
                     }
                     if (!sender.env.pos.config.show_receipt_when_printing) {
                         // TODO
@@ -355,6 +356,19 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
         },
 
         /*
+        Print the order.id into fiscal receipt for the refund
+        */
+        printOrderId: function(receipt) {
+            var message = (receipt.name)
+//<printRecMessage operator="1" message="Second Additional Row Type 3" messageType="3" index="2" font="1" />
+            var tag = '<printRecMessage'
+                + ' messageType="3" message="' + this.encodeXml(message) + '" font="1" index="4"'
+                + ' operator="' + (receipt.operator || '1') + '"'
+                + ' />\n';
+            return tag;
+        },
+
+        /*
           Prints a receipt
         */
         printFiscalReceipt: function(receipt) {
@@ -434,21 +448,36 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                     });
                 });
             }
+            xml += this.printOrderId(receipt)
             xml += '<endFiscalReceipt /></printerFiscalReceipt>';
             this.fiscalPrinter.send(this.url, xml);
             console.log(xml);
         },
 
+        /*
+        DON'T USE, this fiscal closure is forbid by Epson by default
+        */
         printFiscalReport: function() {
             var xml = '<printerFiscalReport>';
-            xml += '<printZReport operator="" />';
+            xml += '<printZReport operator="1" timeout="" />';
             xml += '</printerFiscalReport>';
-            this.fiscalPrinter.send(this.url, xml);
+            var res = this.fiscalPrinter.send(this.url, xml);
+        },
+
+        /*
+        It prints report and fiscal closure both
+        */
+        printFiscalXZReport: function() {
+            var xml = '<printerFiscalReport>';
+            xml += '<displayText operator="1" data="Stampa chiusura giornaliera" />';
+            xml += '<printXZReport operator="1" timeout="" />';
+            xml += '</printerFiscalReport>';
+            var res = this.fiscalPrinter.send(this.url, xml);
         },
 
         printFiscalXReport: function() {
             var xml = '<printerFiscalReport>';
-            xml += '<printXReport operator="" />';
+            xml += '<printXReport operator="1" />';
             xml += '</printerFiscalReport>';
             this.fiscalPrinter.send(this.url, xml);
         },
@@ -460,9 +489,13 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             this.fiscalPrinter.send(this.url, xml);
         },
 
+        /*
+        it need to be logged in to print the duplicate, the pw in data is 0212345 plus 93 spaces, total 100 chars
+        */
         printFiscalReprintLast: function() {
             var xml = '<printerCommand>';
-            xml += '<printDuplicateReceipt operator="1" />';
+            xml += '<directIO command="4038" data="0212345                                                                                             " comment="Login password 0212345 followed by 93 spaces for a length of 100" />';
+            xml += '<printDuplicateReceipt operator="1" />'
             xml += '</printerCommand>';
             this.fiscalPrinter.send(this.url, xml);
         },
@@ -470,6 +503,15 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
         printOpenCashDrawer: function() {
             var xml = '<printerCommand>';
             xml += '<openDrawer operator="1"/>';
+            xml += '</printerCommand>';
+            this.fiscalPrinter.send(this.url, xml);
+        },
+
+        resetPrinter: function(){
+
+            var xml = '<printerCommand>';
+            xml += '<displayText operator="" data="Welcome" />';
+            xml += '<resetPrinter operator="1" />';
             xml += '</printerCommand>';
             this.fiscalPrinter.send(this.url, xml);
         },

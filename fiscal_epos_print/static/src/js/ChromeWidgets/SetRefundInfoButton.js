@@ -6,6 +6,8 @@ odoo.define('fiscal_epos_print.SetRefundInfoButton', function(require) {
     const { useListener } = require('web.custom_hooks');
     const Registries = require('point_of_sale.Registries');
     const { Gui } = require('point_of_sale.Gui');
+    const { posbus } = require('point_of_sale.utils');
+    const PaymentScreen = require('point_of_sale.PaymentScreen');
 
     class SetRefundInfoButton extends PosComponent {
         constructor() {
@@ -19,9 +21,15 @@ odoo.define('fiscal_epos_print.SetRefundInfoButton', function(require) {
             this.bind_order_events();
             this.orderline_change();
         }
+
+        is_available() {
+           const order = this.env.pos.get_order();
+           return order
+        }
+
         mounted() {
             var color = this.refund_get_button_color();
-            this.$el.css('background', color);
+//            this.$el.css('background', color);
         }
         // willUnmount() {
         //     this.env.pos.get('orders').off('add remove change', null, this);
@@ -29,22 +37,22 @@ odoo.define('fiscal_epos_print.SetRefundInfoButton', function(require) {
         // }
         async onClick() {
             var self = this;
-            var current_order = self.pos.get_order();
+            var current_order = this.env.pos.get_order();
             Gui.showPopup('refundinfo', {
-                title: _t('Refund Information Details'),
-                refund_date: current_order.refund_date,
-                refund_report: current_order.refund_report,
-                refund_doc_num: current_order.refund_doc_num,
-                refund_cash_fiscal_serial: current_order.refund_cash_fiscal_serial,
+//                title: _t('Refund Information Details'),
+//                refund_date: current_order.refund_date,
+//                refund_report: current_order.refund_report,
+//                refund_doc_num: current_order.refund_doc_num,
+//                refund_cash_fiscal_serial: current_order.refund_cash_fiscal_serial,
                 update_refund_info_button: function(){
-                    //self.renderElement();
+                  self.renderElement();
                 },
             });
         }
 
         bind_order_events() {
             var self = this;
-            var order = this.pos.get_order();
+            var order = this.env.pos.get_order();
 
             if (!order) {
                 return;
@@ -54,7 +62,7 @@ odoo.define('fiscal_epos_print.SetRefundInfoButton', function(require) {
                 this.old_order.unbind(null,null,this);
             }
 
-            this.pos.bind('change:selectedOrder', this.orderline_change, this);
+            this.env.pos.bind('change:selectedOrder', this.orderline_change, this);
 
             var lines = order.orderlines;
                 lines.unbind('add',     this.orderline_change, this);
@@ -68,7 +76,7 @@ odoo.define('fiscal_epos_print.SetRefundInfoButton', function(require) {
         }
 
         refund_get_button_color() {
-            var order = this.pos.get_order();
+            var order = this.env.pos.get_order();
             var color = '#e2e2e2';
             if(order) {
                 var lines = order.orderlines;
@@ -89,21 +97,117 @@ odoo.define('fiscal_epos_print.SetRefundInfoButton', function(require) {
         }
 
         orderline_change(){
-            var order = this.pos.get_order();
+            var order = this.env.pos.get_order();
             if (order) {
                 var lines = order.orderlines;
                 order.has_refund = lines.find(function(line){ return line.quantity < 0.0;}) != undefined;
             }
             //this.renderElement();
         }
-    }
+
+
+   }
+
+
+
+//    class SetRefundInfoButton extends PosComponent {
+//        constructor() {
+//            super(...arguments);
+//            useListener('click', this.onClick);
+//            // This is from older widget system 12.0
+//            // this.pos.bind('change:selectedOrder',function(){
+//            //     this.orderline_change();
+//            //     this.bind_order_events();
+//            // },this);
+//            this.bind_order_events();
+//            this.orderline_change();
+//        }
+//        mounted() {
+//            var color = this.refund_get_button_color();
+//            this.$el.css('background', color);
+//        }
+//        // willUnmount() {
+//        //     this.env.pos.get('orders').off('add remove change', null, this);
+//        //     this.env.pos.off('change:selectedOrder', null, this);
+//        // }
+//        async onClick() {
+//            var self = this;
+//            var current_order = self.pos.get_order();
+//            Gui.showPopup('refundinfo', {
+//                title: _t('Refund Information Details'),
+//                refund_date: current_order.refund_date,
+//                refund_report: current_order.refund_report,
+//                refund_doc_num: current_order.refund_doc_num,
+//                refund_cash_fiscal_serial: current_order.refund_cash_fiscal_serial,
+//                update_refund_info_button: function(){
+//                    //self.renderElement();
+//                },
+//            });
+//        }
+//
+//        bind_order_events() {
+//            var self = this;
+//            var order = this.pos.get_order();
+//
+//            if (!order) {
+//                return;
+//            }
+//
+//            if(this.old_order) {
+//                this.old_order.unbind(null,null,this);
+//            }
+//
+//            this.pos.bind('change:selectedOrder', this.orderline_change, this);
+//
+//            var lines = order.orderlines;
+//                lines.unbind('add',     this.orderline_change, this);
+//                lines.bind('add',       this.orderline_change, this);
+//                lines.unbind('remove',  this.orderline_change, this);
+//                lines.bind('remove',    this.orderline_change, this);
+//                lines.unbind('change',  this.orderline_change, this);
+//                lines.bind('change',    this.orderline_change, this);
+//
+//            this.old_order = order;
+//        }
+//
+//        refund_get_button_color() {
+//            var order = this.pos.get_order();
+//            var color = '#e2e2e2';
+//            if(order) {
+//                var lines = order.orderlines;
+//                var has_refund = lines.find(function(line){ return line.quantity < 0.0;}) != undefined;
+//                if (has_refund == true)
+//                {
+//                    if (order.refund_date && order.refund_date != '' && order.refund_doc_num && order.refund_doc_num != '' &&
+//                        order.refund_cash_fiscal_serial && order.refund_cash_fiscal_serial != '' && order.refund_report && order.refund_report != '') {
+//                            color = 'lightgreen';
+//                    }
+//                    else
+//                    {
+//                        color = 'red';
+//                    }
+//                }
+//            }
+//            return color;
+//        }
+//
+//        orderline_change(){
+//            var order = this.pos.get_order();
+//            if (order) {
+//                var lines = order.orderlines;
+//                order.has_refund = lines.find(function(line){ return line.quantity < 0.0;}) != undefined;
+//            }
+//            //this.renderElement();
+//        }
+//    }
 
     SetRefundInfoButton.template = 'SetRefundInfoButton';
 
     ProductScreen.addControlButton({
         component: SetRefundInfoButton,
         condition: function() {
-            return true;
+//            return true;
+            return this.env.pos;
         },
     });
 

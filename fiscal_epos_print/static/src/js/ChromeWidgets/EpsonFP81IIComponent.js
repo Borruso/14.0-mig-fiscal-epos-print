@@ -100,7 +100,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             this.hide();
         }
 
-        openCashDrawer() {
+        async openCashDrawer() {
             this.hide();
             // TODO find the same Component method that show loading_*
             // this.chrome.loading_show();
@@ -108,10 +108,24 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             var printer_options = this.getPrinterOptions();
             var fp90 = new eposDriver(printer_options, this);
             fp90.printOpenCashDrawer();
+            const { confirmed } = await Gui.showPopup('ConfirmPopup', {
+                title:_t('CashDrawer Opened'),
+                body: _t('Close'),
+            });
+            if (confirmed) {
+                fp90.resetPrinter();
+
+            } else {
+                // TODO not exist
+                // this.chrome.loading_hide();
+            }
         }
 
         async reprintLastReceipt() {
             this.hide();
+//            var self = this;
+//            this._super();
+
             // TODO find the same Component method that show loading_*
             // this.chrome.loading_show();
             // this.chrome.loading_message(_t('Connecting to the fiscal printer'));
@@ -124,6 +138,7 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             });
             if (confirmed) {
                 fp90.printFiscalReprintLast();
+
             } else {
                 // TODO not exist
                 // this.chrome.loading_hide();
@@ -153,7 +168,8 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
                 body: _t('Please confirm to execute the Printer Fiscal Closure'),
             });
             if (confirmed) {
-                fp90.printFiscalReport();
+//                fp90.printFiscalReport();
+                    fp90.printFiscalXZReport()
             } else {
                 // TODO not exist
                 // this.chrome.loading_hide();
