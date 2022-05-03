@@ -256,24 +256,24 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                 args.refund_date.substr(0, 4) + // year
                 ' ' + args.refund_cash_fiscal_serial;
 
-            var tag = '<printRecMessage'
+            var tag = '<printRecMessage operator="' + (args.operator || '1') + '"'
                 + ' messageType="4" message="' + this.encodeXml(message) + '" font="1" index="1"'
-                + ' operator="' + (args.operator || '1') + '"'
                 + ' />\n';
             return tag;
         },
 
         /*
           Prints a sale refund item line.
+          Prints refund items on a commercial refund document if flag SET 14/58 = 1.
         */
         printRecRefund: function(args) {
             var tag = '<printRecRefund'
+                + ' operator="' + (args.operator || '1') + '"'
                 + ' description="' + this.encodeXml(args.description || '') + '"'
                 + ' quantity="' + (args.quantity || '1') + '"'
                 + ' unitPrice="' + (args.unitPrice || '') + '"'
                 + ' department="' + (args.department || '1') + '"'
                 + ' justification="' + (args.justification || '1') + '"'
-                + ' operator="' + (args.operator || '1') + '"'
                 + ' />';
             return tag;
         },
@@ -310,12 +310,17 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
         printRecTotalRefund: function(args) {
             var tag = '<printRecTotal'
                 + ' operator="' + (args.operator || '1') + '"'
+                + ' description="' + this.encodeXml(args.description || _t('Payment')) + '"'
+                + ' payment="' + (args.payment || '') + '"'
+                + ' paymentType="' + (args.paymentType || '0') + '"'
+                + ' index="' + (args.paymentIndex || '1') + '"'
+                + ' justification="' + (args.paymentjustification || '1') + '"'
                 + ' />';
             return tag;
         },
 
         // Remember that the header goes after <printerFiscalReceipt>
-        // but before <beginFiscalReceipt /> otherwise it will not be printed
+        // but before <beginFiscalReceipt operator="1"/> otherwise it will not be printed
         // as additional header messageType=1
         printFiscalReceiptHeader: function(receipt){
             var self = this;
@@ -331,7 +336,7 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             return msg;
         },
 
-        // Remember that the footer goes within <printerFiscalReceipt><beginFiscalReceipt />
+        // Remember that the footer goes within <printerFiscalReceipt><beginFiscalReceipt operator="1" />
         // as PROMO code messageType=3
         printFiscalReceiptFooter: function(receipt){
             var self = this;
@@ -362,8 +367,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             var message = (receipt.name)
 //<printRecMessage operator="1" message="Second Additional Row Type 3" messageType="3" index="2" font="1" />
             var tag = '<printRecMessage'
-                + ' messageType="3" message="' + this.encodeXml(message) + '" font="1" index="4"'
                 + ' operator="' + (receipt.operator || '1') + '"'
+                + ' messageType="3" message="' + this.encodeXml(message) + '" font="1" index="4"'
                 + ' />\n';
             return tag;
         },
@@ -376,13 +381,14 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             var has_refund = _.every(receipt.orderlines, function(line) {
                 return line.quantity < 0;
             });
-            var xml = '<printerFiscalReceipt><beginFiscalReceipt/>';
+            // TODO check if the printer is fiscalized it require "beginFiscalReceipt" tag
+            var xml = '<printerFiscalReceipt>';//<beginFiscalReceipt operator="1" />';
             // header must be printed before beginning a fiscal receipt
             xml += this.printFiscalReceiptHeader(receipt);
             // TODO now it's seems to be mandatory for refund too
-            // if (!has_refund) {
-            //     xml += '<beginFiscalReceipt/>';
-            // }
+//            if (!has_refund) {
+//                xml += '<beginFiscalReceipt operator="1" />';
+//            }
             if (has_refund)
             {
                 xml += this.printFiscalRefundDetails({
@@ -390,6 +396,7 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                         refund_report: receipt.refund_report,
                         refund_doc_num: receipt.refund_doc_num,
                         refund_cash_fiscal_serial: receipt.refund_cash_fiscal_serial});
+                xml += '<beginFiscalReceipt operator="1" />';
             }
             _.each(receipt.orderlines, function(l, i, list) {
                 if (l.price >= 0) {
@@ -418,12 +425,12 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                         });
 
                         // TODO This line of code is added by us, check if it's right
-                        xml += self.printRecItem({
-                            description: _t('Refund cash'),
-                            quantity: l.quantity * -1.0,
-                            unitPrice: l.price,
-                            department: l.tax_department.code
-                        });
+//                        xml += self.printRecItem({
+//                            description: _t('Refund cash'),
+//                            quantity: l.quantity * -1.0,
+//                            unitPrice: l.price,
+//                            department: l.tax_department.code
+//                        });
                     }
                 }
                 else {
@@ -447,16 +454,26 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             // TODO is always the same Total for refund and payments?
             _.each(receipt.paymentlines, function(l, i, list) {
                 // amount always positive because it's used for refund too
-                xml += self.printRecTotal({
+                if (!has_refund){
+                    xml += self.printRecTotal({
                     payment: Math.abs(l.amount),
                     paymentType: l.type,
                     paymentIndex: l.type_index,
                     description: l.journal,
-                });
+                    });
+                } else if (has_refund) {
+                    xml += self.printRecTotalRefund({
+                    payment: Math.abs(l.amount),
+                    paymentType: l.type,
+                    paymentIndex: l.type_index,
+                    description: l.journal,
+                    });
+                }
+
             });
-            // if (has_refund) {
-            //     xml += self.printRecTotalRefund({});
-            // }
+//             if (has_refund) {
+//                 xml += self.printRecTotalRefund({});
+//             }
             // else {
             //     _.each(receipt.paymentlines, function(l, i, list) {
             //         xml += self.printRecTotal({
@@ -467,8 +484,9 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             //         });
             //     });
             // }
+            xml += '<endFiscalReceipt operator="1" />'
             xml += this.printOrderId(receipt)
-            xml += '<endFiscalReceipt /></printerFiscalReceipt>';
+            xml += '</printerFiscalReceipt>';
             this.fiscalPrinter.send(this.url, xml);
             console.log(xml);
         },
@@ -512,10 +530,20 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
         it need to be logged in to print the duplicate, the pw in data is 0212345 plus 93 spaces, total 100 chars
         */
         printFiscalReprintLast: function() {
-            var xml = '<printerCommand>';
-            xml += '<directIO command="4038" data="0212345                                                                                             " comment="Login password 0212345 followed by 93 spaces for a length of 100" />';
-            xml += '<printDuplicateReceipt operator="1" />'
-            xml += '</printerCommand>';
+//            var xml = '<printerCommand>';
+//                xml += '<directIO command="4038" data="0212345                                                                                             " comment="Login password 0212345 followed by 93 spaces for a length of 100" />';
+//            xml += '</printerCommand>';
+
+            var xml = '<printerCommand>'
+                xml += '<directIO command="1047" data="01" />'
+            xml += '</printerCommand>'
+
+//            var xml = '<printerNonFiscal>';
+//                xml += '<beginNonFiscal operator="1" />';
+//                    xml += '<printDuplicateReceipt operator="1" />';
+//                xml += '<endNonFiscal operator="1" />';
+//            xml += '</printerNonFiscal>';
+//            xml += '<printDuplicateReceipt operator="1" />'
             this.fiscalPrinter.send(this.url, xml);
         },
 

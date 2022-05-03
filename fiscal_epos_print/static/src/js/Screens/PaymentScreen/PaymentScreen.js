@@ -39,6 +39,7 @@ odoo.define("fiscal_epos_print.PaymentScreen", function (require) {
                 printer_options.order = currentOrder;
                 var receipt = currentOrder.export_for_printing();
                 this.sendToFP90Printer(receipt, printer_options);
+                this.env.pos.config.lastOrder = currentOrder;
             }
         }
 

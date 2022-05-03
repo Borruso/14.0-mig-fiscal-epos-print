@@ -5,6 +5,7 @@
         <xpath expr="." position="inside">
             <link rel="stylesheet" type="text/css" href="/fiscal_epos_print/static/lib/pikaday/pikaday.min.css"/>
             <link rel="stylesheet" type="text/css" href="/fiscal_epos_print/static/src/css/pos.css"/>
+            <link rel="stylesheet" type="text/css" href="/fiscal_epos_print/static/src/css/pos_reprint.css"/>
 
             <script type="text/javascript" src="/fiscal_epos_print/static/lib/fiscalprint/fiscalprint.js"/>
             <script type="text/javascript" src="/fiscal_epos_print/static/lib/pikaday/pikaday.min.js"/>
@@ -23,12 +24,13 @@
             <!-- NOTE: New components SetLottery and SetRefund-->
             <!-- <script type="text/javascript" src="/fiscal_epos_print/static/src/js/ChromeWidgets/SetLotteryCodeButton.js"/> -->
             <script type="text/javascript" src="/fiscal_epos_print/static/src/js/ChromeWidgets/SetRefundInfoButton.js"/>
-
+            <script type="text/javascript" src="/fiscal_epos_print/static/src/js/ChromeWidgets/SetReprintButton.js"/>
             <!-- Popups -->
             <script type="text/javascript" src="/fiscal_epos_print/static/src/js/Popups/RefundInfoPopup.js"/>
             <!-- Screens -->
             <script type="text/javascript" src="/fiscal_epos_print/static/src/js/Screens/PaymentScreen/PaymentScreen.js"/>
-            <script type="text/javascript" src="/fiscal_epos_print/static/src/js/Screens/ReceiptScreen/ReceiptScreen.js"/>
+<!--            <script type="text/javascript" src="/fiscal_epos_print/static/src/js/Screens/ReceiptScreen/ReceiptScreen.js"/>-->
+
 
         </xpath>
 

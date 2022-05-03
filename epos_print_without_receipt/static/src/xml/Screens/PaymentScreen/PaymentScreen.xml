@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="PaymentScreen" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('button') and hasclass('next')]" position="before">
+            <div class="button next" t-att-class="{ highlight: currentOrder.is_paid() }"
+                  t-on-click="validateOrderWithoutReceipt(false)">
+                <span class="next_text">Validate without receipt</span>
+                <i class="fa fa-angle-double-right fa-fw"></i>
+            </div>
+        </xpath>
+
+        <xpath expr="//button[hasclass('btn-switchpane')]" position="before">
+            <button class="btn-switchpane" t-att-class="{ secondary: !currentOrder.is_paid() }" t-on-click="validateOrderWithoutReceipt(false)">
+                <h1>Validate without receipt</h1>
+            </button>
+        </xpath>
+    </t>
+
+</templates>

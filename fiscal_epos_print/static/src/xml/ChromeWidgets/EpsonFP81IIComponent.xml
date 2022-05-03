@@ -23,6 +23,16 @@
                         </div>
                     </li>
                     <li>
+                        <div class="button print_last_order" style="padding-top:5px" t-on-click="printLastOrder">
+                            <span>
+                                <img src="/fiscal_epos_print/static/src/img/cashdrawer.svg" alt="Print Last Order" title="Print Last Order"/>
+                            </span>
+                            <span class="category-label">
+                                Print Last Order
+                            </span>
+                        </div>
+                    </li>
+                    <li>
                         <div class="button reprint_last_receipt" style="padding-top:5px" t-on-click="reprintLastReceipt">
                             <span>
                                 <img src="/fiscal_epos_print/static/src/img/reprint.svg" alt="Reprint Last Receipt" title="Reprint last receipt"/>

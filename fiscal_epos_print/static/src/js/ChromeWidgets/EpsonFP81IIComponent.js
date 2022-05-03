@@ -100,6 +100,36 @@ odoo.define("fiscal_epos_print.EpsonFP81IIComponent", function (require) {
             this.hide();
         }
 
+        async printLastOrder() {
+            this.hide();
+
+            var currentOrder = this.env.pos.config.lastOrder
+            if (this.env.pos.config.printer_ip) {
+                if (!currentOrder) {
+                    Gui.showPopup('ErrorPopup', {
+                        'title': _t('Order not found'),
+                        'body': _t("No order to print"),
+                    });
+                    return false;
+                }
+                if (currentOrder.fiscal_receipt_number) {
+                    Gui.showPopup('ErrorPopup', {
+                        'title': _t('Order already printed'),
+                        'body': currentOrder.pos_reference + _t(": order already has a fiscal number, ") + currentOrder.fiscal_receipt_number,
+                    });
+                    return false;
+                }
+                // TODO self.chrome does not exists
+                // this.chrome.loading_show();
+                // this.chrome.loading_message(_t('Connecting to the fiscal printer'));
+                var printer_options = currentOrder.getPrinterOptions();
+                printer_options.order = currentOrder;
+                var receipt = currentOrder.export_for_printing();
+                var fp90 = new eposDriver(printer_options, this);
+                fp90.printFiscalReceipt(receipt);
+            }
+        }
+
         async openCashDrawer() {
             this.hide();
             // TODO find the same Component method that show loading_*

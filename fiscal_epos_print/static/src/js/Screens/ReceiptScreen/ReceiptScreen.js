@@ -45,6 +45,16 @@ odoo.define("fiscal_epos_print.ReceiptScreen", function (require) {
         }
     };
 
+//    MyReceiptScreen.template = 'SetReprintButton';
+//
+//    ReceiptScreen.addControlButton({
+//        component: SetReprintButton,
+//        condition: function() {
+////            return true;
+//            return this.env.pos;
+//        },
+//    });
+//
     Registries.Component.extend(ReceiptScreen, MyReceiptScreen);
 
     return ReceiptScreen;
