@@ -373,6 +373,16 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             return tag;
         },
 
+        printOrderBarcode: function(receipt) {
+            var message = (receipt.name)
+            var tag = '<printBarCode'
+                + ' operator="' + (receipt.operator || '1') + '"'
+                + ' position="901" width="2" height="66" hRIPosition="1" hRIFont="A" codeType="CODE93"'
+                + ' code="' + this.encodeXml(message) + '"'
+                + ' />\n';
+            return tag;
+        },
+
         /*
           Prints a receipt
         */
@@ -451,6 +461,7 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
                 // Pad with spaces to make the code field always 16 characters.
                 xml += '<directIO command="1135" data="01' + receipt.lottery_code.padEnd(16, ' ') + '0000" />';
             }
+            xml += this.printOrderBarcode(receipt)
             // TODO is always the same Total for refund and payments?
             _.each(receipt.paymentlines, function(l, i, list) {
                 // amount always positive because it's used for refund too
@@ -484,8 +495,8 @@ odoo.define("fiscal_epos_print.epson_epos_print", function (require) {
             //         });
             //     });
             // }
-            xml += '<endFiscalReceipt operator="1" />'
             xml += this.printOrderId(receipt)
+            xml += '<endFiscalReceipt operator="1" />'
             xml += '</printerFiscalReceipt>';
             this.fiscalPrinter.send(this.url, xml);
             console.log(xml);
